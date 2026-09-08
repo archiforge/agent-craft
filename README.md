@@ -132,6 +132,14 @@ Get the Pro Pack here: <!-- GUMROAD_LINK -->
 
 The free pack above is complete and useful on its own; the Pro Pack exists if you want the advanced material.
 
+## Support
+
+If Agent Craft saved you a bad merge or a production bug, you can toss a coin to the maker:
+
+[![Donate](https://img.shields.io/badge/PayPal-donate-00457C.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=mohamed.bashir.swe%40gmail.com&item_name=Agent+Craft&currency_code=USD)
+
+Or get the Pro Pack above — that's the better deal for both of us.
+
 ## Contributing
 
 Issues and PRs are welcome. Skill files must pass `./validate.sh` (frontmatter, name/directory match, description ≤ 200 chars, required sections). Keep skills protocol-shaped: When to use / Protocol / Checklist / Anti-patterns / Signals you're done.

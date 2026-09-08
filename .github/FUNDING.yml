@@ -1,0 +1,4 @@
+# Support development of Agent Craft.
+# The PayPal address below is a public receiving address by design;
+# it is not a credential and grants no account access.
+custom: ["https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=mohamed.bashir.swe%40gmail.com&item_name=Agent+Craft&currency_code=USD"]
