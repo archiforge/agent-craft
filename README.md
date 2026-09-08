@@ -23,13 +23,23 @@ Every skill in this pack is a compact, enforceable protocol that prevents one of
 
 ## Quick start
 
+One-command install:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/mohamed-bashir-dev/agent-craft/main/install.sh | bash
+```
+
+That fetches the latest `main` snapshot, installs all 8 skills to the auto-detected target (see [Install targets](#install-targets) below), and cleans up after itself. To pass installer flags, append `-s --` after `bash` (e.g. `| bash -s -- --force`).
+
+Manual / latest-from-source alternative:
+
 ```bash
 git clone https://github.com/mohamed-bashir-dev/agent-craft.git agent-craft
 cd agent-craft
 ./install.sh
 ```
 
-That installs all 8 skills to `~/.agent-skills/skills/` (override with `INSTALL_DIR` — see below). Your agent picks them up according to its skill loader; each skill is self-contained and states clearly when it applies.
+Either way, your agent picks the skills up according to its skill loader; each skill is self-contained and states clearly when it applies.
 
 To verify your checkout:
 
@@ -73,10 +83,17 @@ The format is compatible with agent skill loaders that read YAML frontmatter (`n
 
 ## Install targets
 
-`INSTALL_DIR` controls where skills land (default `~/.agent-skills`):
+When `INSTALL_DIR` is unset, the installer auto-detects its target — the first existing directory wins:
+
+1. `~/.claude` → skills land in `~/.claude/skills/`
+2. `~/.agents` → skills land in `~/.agents/skills/`
+3. `~/.codex` → skills land in `~/.codex/skills/`
+4. none of them exist → `~/.agent-skills` (skills land in `~/.agent-skills/skills/`)
+
+The installer logs the target it chose on its first line of output. `INSTALL_DIR` always overrides the auto-detection:
 
 ```bash
-# default
+# auto-detected target
 ./install.sh
 
 # custom root
@@ -85,7 +102,7 @@ INSTALL_DIR=~/my-skills ./install.sh
 
 | Target | Command |
 |---|---|
-| Default shared pool | `./install.sh` (→ `~/.agent-skills/skills/`) |
+| Auto-detected agent home | `./install.sh` (first existing of `~/.claude`, `~/.agents`, `~/.codex`, else `~/.agent-skills`) |
 | Custom directory | `INSTALL_DIR=/path/to/dir ./install.sh` |
 | Per-user agent dir | point `INSTALL_DIR` at your tool's skills directory |
 
