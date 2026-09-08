@@ -122,7 +122,7 @@ Re-running `install.sh` is safe: identical files are skipped, and differing file
 ./uninstall.sh
 ```
 
-Removes only the skills that shipped with this pack (by name), from the same `INSTALL_DIR` you installed to. It never touches unrelated skills in the same directory.
+Removes only the skills that shipped with this pack (by name), from the same `INSTALL_DIR` you installed to. It never touches unrelated skills in the same directory. When `INSTALL_DIR` is unset, it auto-detects the same target the installer chose (same `~/.claude` → `~/.agents` → `~/.codex` → `~/.agent-skills` order).
 
 ## Pro Pack
 

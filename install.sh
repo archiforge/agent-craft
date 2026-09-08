@@ -106,6 +106,22 @@ SKILLS_SRC="$SCRIPT_DIR/skills"
 FORCE=0
 TIMESTAMP="$(date +%Y%m%d%H%M%S)"
 
+# detect_install_root — echo the default target root: first existing of
+# ~/.claude, ~/.agents, ~/.codex wins; otherwise echo ~/.agent-skills and
+# return 1 so callers can word their log line accordingly.
+# Duplicated verbatim in uninstall.sh (each script stays self-contained).
+detect_install_root() {
+  local candidate
+  for candidate in "$HOME/.claude" "$HOME/.agents" "$HOME/.codex"; do
+    if [[ -d "$candidate" ]]; then
+      echo "$candidate"
+      return 0
+    fi
+  done
+  echo "$HOME/.agent-skills"
+  return 1
+}
+
 usage() {
   cat <<'EOF'
 Usage: ./install.sh [--force]
@@ -140,19 +156,10 @@ done
 # first known agent home that exists, falling back to ~/.agent-skills.
 if [[ -n "${INSTALL_DIR:-}" ]]; then
   INSTALL_ROOT="$INSTALL_DIR"
+elif INSTALL_ROOT="$(detect_install_root)"; then
+  echo "Install target: $INSTALL_ROOT (auto-detected; set INSTALL_DIR=/path to override)"
 else
-  INSTALL_ROOT=""
-  for candidate in "$HOME/.claude" "$HOME/.agents" "$HOME/.codex"; do
-    if [[ -d "$candidate" ]]; then
-      INSTALL_ROOT="$candidate"
-      echo "Install target: $INSTALL_ROOT (auto-detected; set INSTALL_DIR=/path to override)"
-      break
-    fi
-  done
-  if [[ -z "$INSTALL_ROOT" ]]; then
-    INSTALL_ROOT="$HOME/.agent-skills"
-    echo "Install target: $INSTALL_ROOT (default; no ~/.claude, ~/.agents or ~/.codex found — set INSTALL_DIR=/path to override)"
-  fi
+  echo "Install target: $INSTALL_ROOT (default; no ~/.claude, ~/.agents or ~/.codex found — set INSTALL_DIR=/path to override)"
 fi
 
 if [[ ! -d "$SKILLS_SRC" ]]; then

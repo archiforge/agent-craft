@@ -1,14 +1,21 @@
 #!/usr/bin/env bash
 # uninstall.sh — remove ONLY the skills that ship with Agent Craft.
 #
-# Removes ${INSTALL_DIR:-$HOME/.agent-skills}/skills/<name>/ for every <name>
-# present in this pack's skills/ directory. It never touches unrelated skills.
+# Removes $INSTALL_DIR/skills/<name>/ for every <name> present in this
+# pack's skills/ directory. It never touches unrelated skills.
 #
 # Usage:
 #   ./uninstall.sh
 #
 # Environment:
-#   INSTALL_DIR   Install root used with install.sh. Default: ~/.agent-skills
+#   INSTALL_DIR   Install root used with install.sh. When unset, the
+#                 target is auto-detected exactly like install.sh does:
+#                 first existing of ~/.claude, ~/.agents, ~/.codex wins;
+#                 if none exist, ~/.agent-skills is used.
+#
+# Behavior:
+#   - When INSTALL_DIR is unset, logs the auto-detected target and how to
+#     override it (same detection order as install.sh).
 #
 # Safety rules:
 #   - Only the exact pack skill directories (by name) are removed.
@@ -23,7 +30,33 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SKILLS_SRC="$SCRIPT_DIR/skills"
-INSTALL_ROOT="${INSTALL_DIR:-$HOME/.agent-skills}"
+
+# detect_install_root — echo the default target root: first existing of
+# ~/.claude, ~/.agents, ~/.codex wins; otherwise echo ~/.agent-skills and
+# return 1 so callers can word their log line accordingly.
+# Duplicated verbatim in install.sh (each script stays self-contained).
+detect_install_root() {
+  local candidate
+  for candidate in "$HOME/.claude" "$HOME/.agents" "$HOME/.codex"; do
+    if [[ -d "$candidate" ]]; then
+      echo "$candidate"
+      return 0
+    fi
+  done
+  echo "$HOME/.agent-skills"
+  return 1
+}
+
+# Uninstall root: an explicit INSTALL_DIR wins; otherwise auto-detect the
+# same target install.sh would choose, falling back to ~/.agent-skills.
+if [[ -n "${INSTALL_DIR:-}" ]]; then
+  INSTALL_ROOT="$INSTALL_DIR"
+elif INSTALL_ROOT="$(detect_install_root)"; then
+  echo "Uninstall target: $INSTALL_ROOT (auto-detected; set INSTALL_DIR=/path to override)"
+else
+  echo "Uninstall target: $INSTALL_ROOT (default; no ~/.claude, ~/.agents or ~/.codex found — set INSTALL_DIR=/path to override)"
+fi
+
 TARGET_SKILLS="$INSTALL_ROOT/skills"
 
 if [[ ! -d "$SKILLS_SRC" ]]; then
